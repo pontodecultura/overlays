@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Grade de Alinhamento Técnico - Verde Neon</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+        
+        .overlay-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- CONFIGURAÇÃO DA COR VERDE NEON DE ALTA VISIBILIDADE --- 
+           O box-shadow e o filter garantem que a linha seja visível em qualquer iluminação de fundo */
+        .neon-line {
+            position: absolute;
+            background-color: #00ff66; /* Verde Neon Puro */
+            box-shadow: 0 0 6px #00ff66, 0 0 2px rgba(0, 0, 0, 0.9);
+            pointer-events: none;
+        }
+
+        /* --- LINHAS HORIZONTAIS (Divisões de 25%, 50% e 75%) --- */
+        .h-line-1 { top: 25%; left: 0; width: 100%; height: 2px; }
+        .h-line-2 { top: 50%; left: 0; width: 100%; height: 2px; background-color: #00ff66; } /* Linha Central */
+        .h-line-3 { top: 75%; left: 0; width: 100%; height: 2px; }
+
+        /* --- LINHAS VERTICAIS (Divisões de 25%, 50% e 75%) --- */
+        .v-line-1 { left: 25%; top: 0; width: 2px; height: 100%; }
+        .v-line-2 { left: 50%; top: 0; width: 2px; height: 100%; background-color: #00ff66; } /* Linha Central */
+        .v-line-3 { left: 75%; top: 0; width: 2px; height: 100%; }
+
+
+        /* --- CÍRCULO CENTRAL DE ENQUADRAMENTO --- */
+        .center-target {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .neon-circle {
+            width: 200px; /* Tamanho otimizado para enquadramento de rosto/busto */
+            height: 200px;
+            border: 3px solid #00ff66;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff66, inset 0 0 8px #00ff66, 0 0 4px rgba(0, 0, 0, 0.8);
+        }
+
+
+        /* --- LINHAS DIAGONAIS DE PERSPECTIVA ESPACIAL --- */
+        .diagonal-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .diagonal {
+            position: absolute;
+            width: 150%; /* Extensão longa para cobrir toda a diagonal do canvas 16:9 */
+            height: 2px;
+            background-color: #00ff66;
+            box-shadow: 0 0 6px #00ff66, 0 0 2px rgba(0, 0, 0, 0.9);
+            top: 50%;
+            left: 50%;
+        }
+
+        /* Rotação matemática exata para o padrão de tela Proporcional 16:9 */
+        .diag-1 { transform: translate(-50%, -50%) rotate(29.36deg); } 
+        .diag-2 { transform: translate(-50%, -50%) rotate(-29.36deg); }
+
+    </style>
+</head>
+<body>
+
+    <div class="overlay-container">
+        
+        <!-- Grades Horizontais Neon -->
+        <div class="neon-line h-line-1"></div>
+        <div class="neon-line h-line-2"></div>
+        <div class="neon-line h-line-3"></div>
+        
+        <!-- Grades Verticais Neon -->
+        <div class="neon-line v-line-1"></div>
+        <div class="neon-line v-line-2"></div>
+        <div class="neon-line v-line-3"></div>
+
+        <!-- Linhas Diagonais de Perspectiva Cruzada -->
+        <div class="diagonal-container">
+            <div class="diagonal diag-1"></div>
+            <div class="diagonal diag-2"></div>
+        </div>
+
+        <!-- Alvo Centralizado Redondo -->
+        <div class="center-target">
+            <div class="neon-circle"></div>
+        </div>
+
+    </div>
+
+</body>
+</html>

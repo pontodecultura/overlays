@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>OBS Real Audio</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body, html { width: 1920px; height: 1080px; overflow: hidden; background: transparent !important; }
+        canvas { display: block; position: absolute; bottom: 0; left: 0; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <canvas id="eqCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('eqCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1920; canvas.height = 250;
+
+        const barWidth = 8; const gap = 4;
+        const barCount = Math.ceil(canvas.width / (barWidth + gap));
+        let audioContext, analyser, dataArray, bufferLength, audioIniciado = false;
+
+        async function initAudio() {
+            if (audioIniciado) return;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                analyser.fftSize = 512;
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                audioIniciado = true;
+                animate();
+            } catch (err) { console.error(err); }
+        }
+
+        // Força a inicialização com qualquer clique ou toque na tela do OBS
+        window.addEventListener('click', initAudio);
+        window.addEventListener('DOMContentLoaded', () => { setTimeout(initAudio, 500); });
+
+        function animate() {
+            if (!audioIniciado) return;
+            requestAnimationFrame(animate);
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
+            gradient.addColorStop(0, '#2C3D1B'); gradient.addColorStop(1, '#C7B70C');
+
+            for (let i = 0; i < barCount; i++) {
+                const dataIndex = Math.floor((i / barCount) * bufferLength);
+                const value = dataArray[dataIndex] || 0; 
+                const barHeight = (value / 255) * canvas.height * 1.3; 
+                ctx.fillStyle = gradient;
+                ctx.fillRect(i * (barWidth + gap), canvas.height - barHeight, barWidth, barHeight);
+            }
+        }
+    </script>
+</body>
+</html>

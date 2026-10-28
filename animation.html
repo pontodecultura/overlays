@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Matrix Rain Overlay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            background: transparent !important; /* Garante fundo totalmente transparente */
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1920px;
+            height: 1080px;
+            pointer-events: none; /* Ignora cliques para não atrapalhar o OBS */
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Resolução padrão da live (Full HD)
+        canvas.width = 1920;
+        canvas.height = 1080;
+
+        // Katakana original do Matrix + Números e Letras
+        const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const alphabet = katakana.split('');
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const rainDrops = [];
+
+        // Inicializa colunas acima da tela para o efeito começar de forma suave
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = Math.random() * -100;
+        }
+
+        function draw() {
+            // Técnica especial para dar o efeito de rastro (fade-out) mantendo a transparência alfa
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                const x = i * fontSize;
+                const y = rainDrops[i] * fontSize;
+
+                // Faz a ponta de cada linha brilhar levemente em branco como no filme original
+                if (Math.random() > 0.98) {
+                    ctx.fillStyle = '#FFFFFF';
+                } else {
+                    ctx.fillStyle = '#00FF41'; // Verde Matrix fosforescente
+                }
+
+                ctx.fillText(text, x, y);
+
+                // Reinicia a gota no topo após passar da tela baseado em chance aleatória
+                if (y > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
+
+        // Roda a animação de forma otimizada a ~30 quadros por segundo
+        setInterval(draw, 33);
+    </script>
+</body>
+</html>

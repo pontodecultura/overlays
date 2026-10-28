@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>OBS Particles Overlay</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body, html { width: 1920px; height: 1080px; overflow: hidden; background: transparent !important; }
+        canvas { display: block; position: absolute; top: 0; left: 0; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <canvas id="starCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1920; canvas.height = 1080;
+
+        const stars = [];
+        const numStars = 40;
+
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height + canvas.height, // Começam fora da tela, abaixo
+                size: Math.random() * 4 + 1,
+                speed: Math.random() * 1 + 0.5,
+                opacity: Math.random() * 0.5 + 0.2
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < numStars; i++) {
+                let s = stars[i];
+                
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`; // Partículas brancas com brilho suave
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ffffff';
+                ctx.fill();
+                ctx.shadowBlur = 0; // Reseta o blur para manter a performance
+
+                s.y -= s.speed;
+
+                // Se subir tudo, volta para a parte inferior em uma posição X nova
+                if (s.y < -10) {
+                    s.y = canvas.height + 10;
+                    s.x = Math.random() * canvas.width;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
