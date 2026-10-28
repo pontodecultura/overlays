@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Radio Manager</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <img src="./data/logotipo-vertical.png" width="130">
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-page="programs">
+                    <i class="fas fa-radio"></i>
+                    <span>Programas</span>
+                </button>
+                <button class="nav-item" data-page="presenters">
+                    <i class="fas fa-microphone"></i>
+                    <span>Apresentadores</span>
+                </button>
+                <button class="nav-item" data-page="schedule">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Grade</span>
+                </button>
+                <button class="nav-item" data-page="reports">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Relatórios</span>
+                </button>
+                <button class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>Web Radio Manager v1.0</p>
+                <p style="margin-top: 4px;">Dados salvos localmente</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Conteúdo renderizado dinamicamente -->
+        </main>
+    </div>
+
+    <!-- Models -->
+    <script src="js/models/Program.js"></script>
+    <script src="js/models/Presenter.js"></script>
+    <script src="js/models/Config.js"></script>
+
+    <!-- Services -->
+    <script src="js/services/StorageService.js"></script>
+    <script src="js/services/PDFService.js"></script>
+
+    <!-- Controllers -->
+    <script src="js/controllers/ProgramController.js"></script>
+    <script src="js/controllers/PresenterController.js"></script>
+    <script src="js/controllers/ConfigController.js"></script>
+
+    <!-- Views -->
+    <script src="js/views/DashboardView.js"></script>
+    <script src="js/views/ProgramView.js"></script>
+    <script src="js/views/PresenterView.js"></script>
+    <script src="js/views/ScheduleView.js"></script>
+    <script src="js/views/ReportView.js"></script>
+    <script src="js/views/ConfigView.js"></script>
+
+    <!-- App -->
+    <script src="js/app.js"></script>
+</body>
+</html>
