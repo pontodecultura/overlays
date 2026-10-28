@@ -1,0 +1,29 @@
+Marcadores aceitos no modelo padrão
+
+<NOME_COMPLETO>
+<CPF>
+<FUNCAO>
+<CARGO>
+<DATA_INICIO>
+<DATA_FIM>
+<AREA>
+<ATIVIDADES>
+<NOME_INSTITUICAO>
+<INSTITUICAO>
+<ORGAO>
+<CNPJ_INSTITUICAO>
+<CNPJ>
+<ENDERECO_INSTITUICAO>
+<ENDERECO>
+<MUNICIPIO>
+<UF>
+<DATA_EMISSAO>
+<DIA_EMISSAO>
+<MES_EMISSAO>
+<ANO_EMISSAO>
+<RESPONSAVEL>
+<NOME_RESPONSAVEL>
+<CARGO_RESPONSAVEL>
+<FUNCAO_RESPONSAVEL>
+
+Também é possível criar marcadores próprios com a sintaxe <MEU_MARCADOR>, clicar em “Atualizar campos do modelo” e informar o valor correspondente.

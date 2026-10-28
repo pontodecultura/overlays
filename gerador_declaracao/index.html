@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172b4d">
+  <title>Gerador de Declaração de Atividades Profissionais</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-mark" aria-hidden="true">D</div>
+    <div class="brand-copy">
+      <h1>Gerador de declaração</h1>
+      <p>Declaração de atividades profissionais · documento A4</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="button button-quiet" id="resetButton">Restaurar modelo</button>
+      <button type="button" class="button button-primary" id="pdfButton">Gerar PDF / Imprimir</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="editor" aria-label="Formulário de edição">
+      <div class="editor-intro">
+        <span class="eyebrow">PREENCHIMENTO</span>
+        <h2>Dados do documento</h2>
+        <p>Preencha os dados à esquerda. A pré-visualização será atualizada automaticamente.</p>
+      </div>
+
+      <section class="form-section">
+        <div class="section-heading"><span class="step">01</span><h3>Instituição</h3></div>
+        <label class="upload-box" for="logoInput">
+          <input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+          <span class="upload-icon" aria-hidden="true">＋</span>
+          <span><strong>Carregar logotipo</strong><small>PNG, JPG, WEBP ou SVG. Opcional.</small></span>
+          <img id="logoThumb" alt="Prévia do logotipo" hidden>
+        </label>
+        <div class="field-grid">
+          <label class="field field-wide">Nome da instituição
+            <input id="institutionName" type="text" placeholder="NOME DA INSTITUIÇÃO" autocomplete="organization" required>
+          </label>
+          <label class="field field-wide">Órgão / secretaria
+            <input id="institutionOrg" type="text" placeholder="Ex.: Secretaria Municipal de Educação">
+          </label>
+          <label class="field">CNPJ
+            <input id="institutionCnpj" type="text" placeholder="00.000.000/0000-00" inputmode="text" required>
+          </label>
+          <label class="field field-wide">Endereço completo
+            <input id="institutionAddress" type="text" placeholder="Rua, bairro, município - UF, CEP">
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <div class="section-heading"><span class="step">02</span><h3>Profissional</h3></div>
+        <div class="field-grid">
+          <label class="field field-wide">Nome completo
+            <input id="fullName" type="text" placeholder="Nome completo do(a) profissional" required>
+          </label>
+          <label class="field">CPF
+            <input id="cpf" type="text" placeholder="000.000.000-00" required>
+          </label>
+          <label class="field">Função / cargo
+            <input id="jobTitle" type="text" placeholder="Função exercida" required>
+          </label>
+          <label class="field">Data de início
+            <input id="startDate" type="date" required>
+          </label>
+          <label class="field">Data de término
+            <input id="endDate" type="date" required>
+          </label>
+          <label class="field field-wide">Área de atuação
+            <input id="area" type="text" placeholder="Área ou tema das atividades" required>
+          </label>
+          <label class="field field-wide">Flexão de gênero no texto
+            <select id="genderMode">
+              <option value="inclusive">Manter forma inclusiva (o/a)</option>
+              <option value="masculine">Masculino</option>
+              <option value="feminine">Feminino</option>
+            </select>
+            <small>Controla expressões como “inscrito(a)”, “o(a)” e “interessado(a)”.</small>
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <div class="section-heading"><span class="step">03</span><h3>Atividades exercidas</h3></div>
+        <p class="section-note">Inclua cada atividade em um campo separado. O marcador <code>&lt;ATIVIDADES&gt;</code> será substituído por uma lista.</p>
+        <div id="activitiesList" class="activities-list"></div>
+        <button type="button" class="button button-outline button-full" id="addActivityButton">＋ Adicionar atividade</button>
+      </section>
+
+      <section class="form-section">
+        <div class="section-heading"><span class="step">04</span><h3>Emissão e assinatura</h3></div>
+        <div class="field-grid">
+          <label class="field">Município
+            <input id="municipality" type="text" placeholder="Município" required>
+          </label>
+          <label class="field">UF
+            <input id="state" type="text" placeholder="BA" maxlength="2" required>
+          </label>
+          <label class="field field-wide">Data de emissão
+            <input id="issueDate" type="date" required>
+          </label>
+          <label class="field field-wide">Nome do responsável pela assinatura
+            <input id="signerName" type="text" placeholder="Nome completo" required>
+          </label>
+          <label class="field field-wide">Cargo / função do responsável
+            <input id="signerTitle" type="text" placeholder="Cargo ou função" required>
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section model-section">
+        <div class="section-heading"><span class="step">05</span><h3>Modelo do texto</h3></div>
+        <p class="section-note">Edite o texto-base livremente. Use marcadores entre sinais de menor e maior, por exemplo <code>&lt;NOME_COMPLETO&gt;</code>. Para campos próprios, crie um novo marcador e atualize os campos abaixo.</p>
+        <label class="field field-wide">Título do documento
+          <input id="documentTitle" type="text" value="DECLARAÇÃO DE ATIVIDADES PROFISSIONAIS">
+        </label>
+        <label class="field field-wide">Texto da declaração
+          <textarea id="templateText" rows="11" spellcheck="false"></textarea>
+        </label>
+        <button type="button" class="button button-outline button-full" id="refreshMarkersButton">Atualizar campos do modelo</button>
+        <div id="customMarkerArea" class="custom-marker-area" hidden>
+          <h4>Marcadores personalizados</h4>
+          <p class="section-note">Preencha aqui os marcadores novos identificados no modelo.</p>
+          <div id="customMarkerFields" class="field-grid"></div>
+        </div>
+      </section>
+
+      <p class="privacy-note"><span aria-hidden="true">◈</span> Os dados são processados localmente neste navegador. O projeto não envia informações a um servidor.</p>
+    </aside>
+
+    <section class="preview-column" aria-label="Pré-visualização do documento">
+      <div class="preview-toolbar">
+        <div>
+          <span class="eyebrow">PRÉ-VISUALIZAÇÃO</span>
+          <h2>Documento A4</h2>
+        </div>
+        <span class="paper-tag">A4 · Retrato</span>
+      </div>
+      <div class="preview-stage">
+        <article id="documentPreview" class="document-page">
+          <header class="document-header">
+            <img id="documentLogo" class="document-logo" alt="Logotipo da instituição" hidden>
+            <div id="previewInstitutionName" class="institution-name">NOME DA INSTITUIÇÃO</div>
+            <div id="previewInstitutionOrg" class="institution-org"></div>
+            <div id="previewInstitutionCnpj" class="institution-meta"></div>
+            <div id="previewInstitutionAddress" class="institution-meta"></div>
+          </header>
+          <div class="document-rule"></div>
+          <h2 id="previewDocumentTitle" class="document-title">DECLARAÇÃO DE ATIVIDADES PROFISSIONAIS</h2>
+          <div id="previewBody" class="document-body"></div>
+          <div id="previewIssueDate" class="issue-date"></div>
+          <footer class="signature-block">
+            <div class="signature-line"></div>
+            <div id="previewSignerName" class="signer-name"></div>
+            <div id="previewSignerTitle" class="signer-title"></div>
+          </footer>
+          <div class="document-footer-note">Documento emitido para fins de comprovação das atividades profissionais declaradas.</div>
+        </article>
+      </div>
+      <p class="preview-help">Para gerar o arquivo, clique em <strong>Gerar PDF / Imprimir</strong> e selecione <strong>Salvar como PDF</strong> no destino da impressão do navegador.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
