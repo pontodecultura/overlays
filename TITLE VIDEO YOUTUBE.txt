@@ -1,0 +1,38 @@
+<TITLE VIDEO YOUTUBE>
+
+<DESCRIPTION>
+
+<FIRST PARAGRAPH>
+
+<SECOND PARAGRAPH>
+
+<THIRD PARAGRAPH>
+
+
+</DESCRIPTION>
+
+#BarrigudaWebTV #<hashtag1> #<hashtag2> #<hashtag3> #<keywords1> #<keywords2> #<keywords1> #irecê #Bahia #PrefeituraMunicipal #SecretáriaDeEducação
+
+
+
+
+FIRST PARAGRAPH - Uma descrição sobre o vídeo usando as palavras chaves específicas sobre o tema, ex:[
+	seja BEM VINDO a LIVE do VITÃO, nos iremos JOGAR  o jogo do MILÊNCIO....
+
+]
+SECOND PARAGRAPH - Uma descrição convidado o espectador a curtir, comentar e compartilhar no vídeo e se inscrever no canal, ex:[
+  Se você gostou do nosso conteúdo, por favor não esqueça de deixar o seu like...
+
+]
+THIRD PARAGRAPH - Aqui colocamos os créditos do canal ex: [
+	
+CRÉDITOS:
+Apresentação:........
+Produção Executiva: .......
+Trilha Sonora:......
+Idealização:.......
+Direção:..........
+Designer e Capa de Vídeo:.......	
+]
+
+
