@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Overlay & Dashboard OBS Studio</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;600;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Marquee Scroll Animation */
+    @keyframes marquee {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+
+    .animate-marquee {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: marquee var(--speed, 30s) linear infinite;
+    }
+
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+
+    /* Glassmorphic Styles */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen overflow-x-hidden flex flex-col">
+
+  <!-- Header & View Switcher Bar (Hidden in Standalone OBS View) -->
+  <header id="appHeader" class="bg-slate-900/90 border-b border-slate-800 p-4 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+          <i class="fa-solid fa-tower-broadcast text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold font-outfit text-white tracking-wide flex items-center gap-2">
+            OBS Broadcast Ticker
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/30">v2.0 Pro</span>
+          </h1>
+          <p class="text-xs text-slate-400">Painel de Controle e Overlay para Transmissões</p>
+        </div>
+      </div>
+
+      <!-- Control Tabs -->
+      <div class="flex items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+        <button id="btnNavDash" onclick="switchMode('dashboard')" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20">
+          <i class="fa-solid fa-sliders"></i> Painel Dashboard
+        </button>
+        <button id="btnNavOverlay" onclick="switchMode('overlay')" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-2">
+          <i class="fa-solid fa-tv"></i> Modo Overlay (OBS)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main id="mainContainer" class="flex-1 flex flex-col">
+    
+    <!-- ==================== VIEW 1: DASHBOARD CONTROL PANEL ==================== -->
+    <div id="dashboardView" class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+      
+      <!-- Top Actions Bar -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- OBS Visibility Toggle Card -->
+        <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between border-l-4 border-l-sky-500 shadow-xl">
+          <div>
+            <div class="flex justify-between items-start mb-3">
+              <span class="text-xs font-bold text-sky-400 tracking-wider uppercase">Status do Overlay</span>
+              <span id="statusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Visível na Live
+              </span>
+            </div>
+            <h3 class="text-xl font-bold font-outfit text-white">Controle de Visibilidade</h3>
+            <p class="text-xs text-slate-400 mt-1">Oculte ou exiba a barra de rolagem instantaneamente no OBS Studio.</p>
+          </div>
+          
+          <div class="mt-6 flex gap-3">
+            <button id="toggleVisBtn" onclick="toggleVisibility()" class="flex-1 py-3 px-4 bg-sky-500 hover:bg-sky-400 active:bg-sky-600 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-eye-slash"></i> Ocultar Overlay
+            </button>
+            <button onclick="copyOverlayURL()" class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition flex items-center gap-2 text-xs font-semibold border border-slate-700" title="Copiar URL para o OBS">
+              <i class="fa-solid fa-link text-sky-400"></i> Copiar URL
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Preview Panel -->
+        <div class="glass-panel p-5 rounded-2xl lg:col-span-2 flex flex-col justify-between shadow-xl">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-circle text-red-500 text-[10px] animate-ping"></i> Monitor de Pré-visualização
+            </h3>
+            <span class="text-xs text-slate-500">Sincronizado via BroadcastChannel</span>
+          </div>
+          
+          <!-- Mock Browser Screen Container -->
+          <div class="w-full bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-inner relative flex flex-col justify-end min-h-[140px] p-2">
+            <!-- Simulated Gameplay/Camera background -->
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/40 to-slate-800/20 flex items-center justify-center text-slate-700 font-bold text-lg pointer-events-none select-none">
+              <i class="fa-solid fa-headset text-4xl opacity-20"></i>
+            </div>
+            
+            <!-- Scaled Ticker Bar inside preview -->
+            <div id="previewTickerWrapper" class="relative z-10 w-full transition-all duration-500 transform">
+              <div class="w-full h-10 bg-slate-900/95 border-t-2 border-sky-400 flex items-center shadow-lg overflow-hidden text-xs">
+                <div class="bg-sky-400 text-slate-950 font-black px-3 py-2 flex items-center gap-1.5 uppercase tracking-wider shrink-0 text-[10px]">
+                  <i class="fa-solid fa-bolt"></i> Ao Vivo
+                </div>
+                <div class="overflow-hidden whitespace-nowrap w-full">
+                  <div id="previewMarquee" class="inline-flex gap-8 items-center px-4 animate-marquee text-slate-200">
+                    <!-- Dynamic Items render here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Configuration Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column: Weather Settings & Custom Text -->
+        <div class="space-y-6">
+          
+          <!-- Weather API Card -->
+          <div class="glass-panel p-6 rounded-2xl shadow-xl space-y-4">
+            <h3 class="text-base font-bold font-outfit text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+              <i class="fa-solid fa-cloud-sun text-sky-400"></i> Configurações de Clima
+            </h3>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 font-medium mb-1">Latitude</label>
+                <input type="number" step="0.0001" id="cfgLat" value="-23.5505" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 font-medium mb-1">Longitude</label>
+                <input type="number" step="0.0001" id="cfgLng" value="-46.6333" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs text-slate-400 font-medium mb-1">Nome da Cidade / Rótulo</label>
+              <input type="text" id="cfgCityName" value="São Paulo" placeholder="Ex: Rio de Janeiro" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
+              <div class="flex items-center gap-2">
+                <input type="checkbox" id="cfgIncludeWeather" checked class="w-4 h-4 rounded bg-slate-900 border-slate-800 text-sky-500 focus:ring-sky-500/20">
+                <label for="cfgIncludeWeather" class="text-xs text-slate-300 font-medium">Exibir clima no Ticker</label>
+              </div>
+              <button onclick="updateWeatherConfig()" class="px-3 py-1.5 bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 rounded-lg text-xs font-semibold transition border border-sky-500/30">
+                Salvar
+              </button>
+            </div>
+            
+            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-xs flex items-center justify-between">
+              <span class="text-slate-400">Última atualização:</span>
+              <span id="weatherLastSync" class="text-sky-400 font-mono text-[11px]">Buscando...</span>
+            </div>
+          </div>
+
+          <!-- General Ticker Settings Card -->
+          <div class="glass-panel p-6 rounded-2xl shadow-xl space-y-4">
+            <h3 class="text-base font-bold font-outfit text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+              <i class="fa-solid fa-sliders text-sky-400"></i> Ajustes da Barra
+            </h3>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-400">Velocidade da Rolagem</span>
+                <span id="speedVal" class="text-sky-400 font-bold">30s</span>
+              </div>
+              <input type="range" id="cfgSpeed" min="10" max="60" value="30" oninput="document.getElementById('speedVal').innerText = this.value + 's'; saveSettings();" class="w-full accent-sky-400">
+            </div>
+
+            <div>
+              <label class="block text-xs text-slate-400 font-medium mb-1">Texto do Prefixo (Badge Esquerda)</label>
+              <input type="text" id="cfgBadgeText" value="AO VIVO" oninput="saveSettings()" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Queue Manager (News, Links & Custom Messages) -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="glass-panel p-6 rounded-2xl shadow-xl space-y-6">
+            <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-4">
+              <div>
+                <h3 class="text-lg font-bold font-outfit text-white flex items-center gap-2">
+                  <i class="fa-solid fa-newspaper text-sky-400"></i> Gerenciador de Conteúdo
+                </h3>
+                <p class="text-xs text-slate-400">Adicione mensagens personalizadas, avisos, links ou notícias para exibir no rodapé.</p>
+              </div>
+              <span id="itemCount" class="text-xs font-semibold px-2.5 py-1 bg-slate-800 text-slate-300 rounded-full">0 itens ativos</span>
+            </div>
+
+            <!-- Form to Add Item -->
+            <form id="addContentForm" onsubmit="handleAddItem(event)" class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-1">
+                  <label class="block text-xs text-slate-400 font-medium mb-1">Categoria / Tag</label>
+                  <select id="itemCategory" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+                    <option value="NOTÍCIA">📰 NOTÍCIA</option>
+                    <option value="AVISO">⚠️ AVISO</option>
+                    <option value="PROMO">🎉 PROMOÇÃO</option>
+                    <option value="REDES">🌐 REDES SOCIAIS</option>
+                    <option value="LINK">🔗 LINK EXTERNO</option>
+                  </select>
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-xs text-slate-400 font-medium mb-1">Texto da Notícia / Mensagem</label>
+                  <input type="text" id="itemText" placeholder="Ex: Inscreva-se no canal e ative o sininho!" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <div class="sm:col-span-3">
+                  <label class="block text-xs text-slate-400 font-medium mb-1">Link Opcional (URL para exibição em destaque)</label>
+                  <input type="url" id="itemUrl" placeholder="https://meusite.com/promocao" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+                </div>
+                <div class="sm:col-span-1 flex items-end">
+                  <button type="submit" class="w-full py-2 px-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-lg transition text-xs flex items-center justify-center gap-1.5 shadow-md shadow-sky-500/20">
+                    <i class="fa-solid fa-plus"></i> Adicionar
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Pre-loaded Samples Quick Add -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+              <span class="text-slate-500 font-medium whitespace-nowrap">Exemplos rápidos:</span>
+              <button onclick="addPreset('NOTÍCIA', 'Inscreva-se no canal para apoiar a live!', '')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 whitespace-nowrap transition">
+                + Inscrição
+              </button>
+              <button onclick="addPreset('PROMO', 'Cupom 20% OFF na loja oficial: LIVE20', 'https://loja.exemplo.com')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 whitespace-nowrap transition">
+                + Cupom Promo
+              </button>
+              <button onclick="addPreset('REDES', 'Siga no Instagram e Twitter: @MinhaLive', '')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 whitespace-nowrap transition">
+                + Redes Sociais
+              </button>
+            </div>
+
+            <!-- Active Items List -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fila de Transmissão</h4>
+              <div id="itemsContainer" class="space-y-2 max-h-[350px] overflow-y-auto pr-1">
+                <!-- Items list rendered dynamically -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== VIEW 2: STANDALONE OBS OVERLAY ==================== -->
+    <div id="overlayView" class="hidden fixed inset-0 pointer-events-none flex flex-col justify-end">
+      
+      <!-- OBS Ticker Bar Component -->
+      <div id="obsTickerBar" class="w-full bg-slate-950/90 border-t-2 border-sky-400 backdrop-blur-md shadow-2xl flex items-center overflow-hidden transition-all duration-500 transform translate-y-0 opacity-100 h-12">
+        
+        <!-- Fixed Left Prefix Tag -->
+        <div id="obsBadge" class="bg-sky-400 text-slate-950 font-black px-5 h-full flex items-center justify-center gap-2 uppercase tracking-wider shrink-0 text-sm shadow-lg z-20">
+          <i class="fa-solid fa-bolt text-slate-950"></i> <span id="obsBadgeText">AO VIVO</span>
+        </div>
+
+        <!-- Scrolling Content Container -->
+        <div class="w-full overflow-hidden whitespace-nowrap relative flex items-center">
+          <div id="obsMarquee" class="inline-flex items-center gap-10 animate-marquee text-slate-100 text-sm font-medium tracking-wide">
+            <!-- Dynamic items rendered here -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 border border-sky-500/40 text-sky-400 px-4 py-3 rounded-xl shadow-2xl transition-all duration-300 opacity-0 transform translate-y-4 pointer-events-none z-50 flex items-center gap-3 text-xs font-semibold">
+    <i class="fa-solid fa-circle-check text-base"></i>
+    <span id="toastMsg">Notificação</span>
+  </div>
+
+  <script>
+    // =========================================================================
+    // GLOBAL STATE & SYSTEM VARIABLES
+    // =========================================================================
+    const BROADCAST_CHANNEL_NAME = 'obs_ticker_channel';
+    let broadcastChannel = null;
+
+    // Default Application State
+    let state = {
+      isVisible: true,
+      badgeText: 'AO VIVO',
+      scrollSpeed: 30, // seconds for full marquee loop
+      weatherConfig: {
+        enabled: true,
+        lat: -23.5505,
+        lng: -46.6333,
+        cityName: 'São Paulo',
+        temp: null,
+        humidity: null,
+        wind: null,
+        condition: 'Buscando...',
+        icon: '🌤️',
+        lastUpdated: null
+      },
+      items: [
+        { id: 1, category: 'NOTÍCIA', text: 'Bem-vindo à transmissão ao vivo! Acompanhe as atualizações em tempo real.', url: '' },
+        { id: 2, category: 'REDES', text: 'Siga nossas redes sociais para novidades e conteúdo exclusivo.', url: 'https://instagram.com' },
+        { id: 3, category: 'PROMO', text: 'Use o cupom AOVIVO10 para 10% de desconto em nossa loja.', url: '' }
+      ]
+    };
+
+    // Open-Meteo Weather Codes
+    const weatherCodesMap = {
+      0: { text: "Céu Limpo", icon: "☀️" },
+      1: { text: "Pred. Limpo", icon: "🌤️" },
+      2: { text: "Parcial. Nublado", icon: "⛅" },
+      3: { text: "Nublado", icon: "☁️" },
+      45: { text: "Nevoeiro", icon: "🌫️" },
+      51: { text: "Garoa Leve", icon: "🌦️" },
+      61: { text: "Chuva Leve", icon: "🌧️" },
+      63: { text: "Chuva Moderada", icon: "🌧️" },
+      65: { text: "Chuva Forte", icon: "🌧️" },
+      80: { text: "Pancadas de Chuva", icon: "🌩️" },
+      95: { text: "Trovoada", icon: "⛈️" }
+    };
+
+    // =========================================================================
+    // INITIALIZATION & SETUP
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadStateFromStorage();
+      setupBroadcastChannel();
+      
+      // Determine mode from URL query string (e.g. ?mode=overlay for OBS)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('mode') === 'overlay') {
+        switchMode('overlay');
+      } else {
+        switchMode('dashboard');
+        fetchWeatherData();
+      }
+
+      // Auto-update weather hourly (3600000 ms)
+      setInterval(fetchWeatherData, 3600000);
+      
+      renderAll();
+    });
+
+    // BroadcastChannel for cross-tab realtime sync
+    function setupBroadcastChannel() {
+      if ('BroadcastChannel' in window) {
+        broadcastChannel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+        broadcastChannel.onmessage = (event) => {
+          if (event.data && event.data.type === 'STATE_UPDATE') {
+            state = event.data.state;
+            renderAll();
+          }
+        };
+      }
+    }
+
+    function syncState() {
+      saveStateToStorage();
+      if (broadcastChannel) {
+        broadcastChannel.postMessage({ type: 'STATE_UPDATE', state: state });
+      }
+      renderAll();
+    }
+
+    function saveStateToStorage() {
+      localStorage.setItem('obs_ticker_state', JSON.stringify(state));
+    }
+
+    function loadStateFromStorage() {
+      const saved = localStorage.getItem('obs_ticker_state');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
+        } catch (e) {
+          console.error('Erro ao carregar estado do localStorage', e);
+        }
+      }
+    }
+
+    // =========================================================================
+    // VIEW SWITCHER LOGIC
+    // =========================================================================
+    function switchMode(mode) {
+      const dashView = document.getElementById('dashboardView');
+      const overlayView = document.getElementById('overlayView');
+      const header = document.getElementById('appHeader');
+      const btnDash = document.getElementById('btnNavDash');
+      const btnOverlay = document.getElementById('btnNavOverlay');
+
+      if (mode === 'overlay') {
+        dashView.classList.add('hidden');
+        header.classList.add('hidden');
+        overlayView.classList.remove('hidden');
+        document.body.classList.remove('bg-slate-950');
+        document.body.classList.add('bg-transparent');
+      } else {
+        overlayView.classList.add('hidden');
+        dashView.classList.remove('hidden');
+        header.classList.remove('hidden');
+        document.body.classList.add('bg-slate-950');
+        document.body.classList.remove('bg-transparent');
+
+        // Update Nav button styles
+        btnDash.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20";
+        btnOverlay.className = "px-4 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-2";
+      }
+    }
+
+    // =========================================================================
+    // WEATHER API (Open-Meteo Hourly)
+    // =========================================================================
+    async function fetchWeatherData() {
+      if (!state.weatherConfig.enabled) return;
+
+      const { lat, lng } = state.weatherConfig;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data && data.current) {
+          const current = data.current;
+          const codeInfo = weatherCodesMap[current.weather_code] || { text: "Tempo Limpo", icon: "☀️" };
+          
+          state.weatherConfig.temp = Math.round(current.temperature_2m);
+          state.weatherConfig.humidity = current.relative_humidity_2m;
+          state.weatherConfig.wind = Math.round(current.wind_speed_10m);
+          state.weatherConfig.condition = codeInfo.text;
+          state.weatherConfig.icon = codeInfo.icon;
+          state.weatherConfig.lastUpdated = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          syncState();
+        }
+      } catch (err) {
+        console.error("Erro ao carregar dados do Open-Meteo:", err);
+        state.weatherConfig.condition = "Erro Clima";
+        syncState();
+      }
+    }
+
+    function updateWeatherConfig() {
+      state.weatherConfig.lat = parseFloat(document.getElementById('cfgLat').value) || state.weatherConfig.lat;
+      state.weatherConfig.lng = parseFloat(document.getElementById('cfgLng').value) || state.weatherConfig.lng;
+      state.weatherConfig.cityName = document.getElementById('cfgCityName').value.trim() || state.weatherConfig.cityName;
+      state.weatherConfig.enabled = document.getElementById('cfgIncludeWeather').checked;
+
+      showToast("Configurações de clima salvas!");
+      fetchWeatherData();
+    }
+
+    // =========================================================================
+    // ACTIONS & ITEM MANAGEMENT
+    // =========================================================================
+    function toggleVisibility() {
+      state.isVisible = !state.isVisible;
+      syncState();
+      showToast(state.isVisible ? "Overlay ativado na transmissão" : "Overlay ocultado");
+    }
+
+    function saveSettings() {
+      state.scrollSpeed = parseInt(document.getElementById('cfgSpeed').value) || 30;
+      state.badgeText = document.getElementById('cfgBadgeText').value.trim() || 'AO VIVO';
+      syncState();
+    }
+
+    function handleAddItem(event) {
+      event.preventDefault();
+      const textInput = document.getElementById('itemText');
+      const categorySelect = document.getElementById('itemCategory');
+      const urlInput = document.getElementById('itemUrl');
+
+      const newItem = {
+        id: Date.now(),
+        category: categorySelect.value,
+        text: textInput.value.trim(),
+        url: urlInput.value.trim()
+      };
+
+      state.items.push(newItem);
+      textInput.value = '';
+      urlInput.value = '';
+
+      syncState();
+      showToast("Item adicionado à fila!");
+    }
+
+    function addPreset(category, text, url) {
+      state.items.push({
+        id: Date.now(),
+        category: category,
+        text: text,
+        url: url
+      });
+      syncState();
+      showToast("Exemplo adicionado!");
+    }
+
+    function removeItem(id) {
+      state.items = state.items.filter(item => item.id !== id);
+      syncState();
+      showToast("Item removido");
+    }
+
+    function copyOverlayURL() {
+      const url = `${window.location.origin}${window.location.pathname}?mode=overlay`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast("URL copiada para o OBS!");
+      }).catch(() => {
+        showToast("URL do overlay: " + url);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4');
+      }, 3000);
+    }
+
+    // =========================================================================
+    // RENDERING LOGIC (DASHBOARD & OVERLAY)
+    // =========================================================================
+    function renderAll() {
+      renderDashboardControls();
+      renderItemsList();
+      renderMarqueeContent();
+      applyVisibilityState();
+    }
+
+    function renderDashboardControls() {
+      // Visibility Button State
+      const toggleBtn = document.getElementById('toggleVisBtn');
+      const statusBadge = document.getElementById('statusBadge');
+
+      if (state.isVisible) {
+        toggleBtn.innerHTML = `<i class="fa-solid fa-eye-slash"></i> Ocultar Overlay`;
+        toggleBtn.className = "flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2";
+        statusBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Visível na Live`;
+      } else {
+        toggleBtn.innerHTML = `<i class="fa-solid fa-eye"></i> Exibir Overlay`;
+        toggleBtn.className = "flex-1 py-3 px-4 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2";
+        statusBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20";
+        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> Oculto`;
+      }
+
+      // Sync form inputs if not focused
+      if (document.activeElement.id !== 'cfgLat') document.getElementById('cfgLat').value = state.weatherConfig.lat;
+      if (document.activeElement.id !== 'cfgLng') document.getElementById('cfgLng').value = state.weatherConfig.lng;
+      if (document.activeElement.id !== 'cfgCityName') document.getElementById('cfgCityName').value = state.weatherConfig.cityName;
+      document.getElementById('cfgIncludeWeather').checked = state.weatherConfig.enabled;
+      document.getElementById('weatherLastSync').innerText = state.weatherConfig.lastUpdated || 'Buscando...';
+      
+      document.getElementById('obsBadgeText').innerText = state.badgeText;
+    }
+
+    function renderItemsList() {
+      const container = document.getElementById('itemsContainer');
+      document.getElementById('itemCount').innerText = `${state.items.length} itens ativos`;
+
+      if (state.items.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-6 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
+            Nenhuma notícia ou mensagem cadastrada. Adicione acima.
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = state.items.map(item => `
+        <div class="bg-slate-900/90 border border-slate-800 hover:border-slate-700 p-3 rounded-xl flex items-center justify-between gap-3 text-xs transition">
+          <div class="flex items-center gap-3 overflow-hidden">
+            <span class="px-2 py-0.5 rounded font-black text-[10px] tracking-wider uppercase ${getCategoryBadgeStyle(item.category)} shrink-0">
+              ${item.category}
+            </span>
+            <div class="truncate">
+              <span class="text-slate-200 font-medium">${escapeHtml(item.text)}</span>
+              ${item.url ? `<a href="${item.url}" target="_blank" class="text-sky-400 hover:underline ml-2 text-[11px]"><i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i> ${escapeHtml(item.url)}</a>` : ''}
+            </div>
+          </div>
+          <button onclick="removeItem(${item.id})" class="text-slate-500 hover:text-rose-400 p-1.5 transition rounded-lg hover:bg-slate-800 shrink-0">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function getCategoryBadgeStyle(cat) {
+      switch (cat) {
+        case 'NOTÍCIA': return 'bg-sky-500/20 text-sky-400 border border-sky-500/30';
+        case 'AVISO': return 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+        case 'PROMO': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        case 'REDES': return 'bg-purple-500/20 text-purple-400 border border-purple-500/30';
+        case 'LINK': return 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30';
+        default: return 'bg-slate-800 text-slate-300';
+      }
+    }
+
+    function renderMarqueeContent() {
+      const marqueeInnerHtml = buildMarqueeHTML();
+      
+      // Update OBS Marquee & Preview Marquee
+      const obsMarquee = document.getElementById('obsMarquee');
+      const previewMarquee = document.getElementById('previewMarquee');
+      
+      // Set animation speed CSS variable
+      const speed = `${state.scrollSpeed}s`;
+      obsMarquee.style.setProperty('--speed', speed);
+      previewMarquee.style.setProperty('--speed', speed);
+
+      // Duplicate content to achieve seamless infinite looping
+      const fullContent = `${marqueeInnerHtml} <span class="text-slate-600 px-4">•</span> ${marqueeInnerHtml}`;
+      obsMarquee.innerHTML = fullContent;
+      previewMarquee.innerHTML = fullContent;
+    }
+
+    function buildMarqueeHTML() {
+      let elements = [];
+
+      // Add Weather Item if enabled
+      if (state.weatherConfig.enabled && state.weatherConfig.temp !== null) {
+        const w = state.weatherConfig;
+        elements.push(`
+          <span class="inline-flex items-center gap-2 bg-slate-900/80 px-3 py-1 rounded-full border border-sky-500/30 text-sky-400 shrink-0">
+            <span>${w.icon}</span>
+            <span class="font-bold text-white">${escapeHtml(w.cityName)}:</span>
+            <span class="font-bold text-sky-400">${w.temp}°C</span>
+            <span class="text-slate-400 text-xs">${w.condition}</span>
+            <span class="text-slate-500 text-xs">• Umidade: <strong class="text-slate-200">${w.humidity}%</strong></span>
+            <span class="text-slate-500 text-xs">• Vento: <strong class="text-slate-200">${w.wind} km/h</strong></span>
+          </span>
+        `);
+      }
+
+      // Add Queue News & Messages
+      state.items.forEach(item => {
+        elements.push(`
+          <span class="inline-flex items-center gap-2 shrink-0">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${getCategoryBadgeStyle(item.category)}">
+              ${item.category}
+            </span>
+            <span class="text-slate-100 font-medium">${escapeHtml(item.text)}</span>
+            ${item.url ? `
+              <span class="bg-sky-500 text-slate-950 font-bold px-2 py-0.5 rounded-full text-[10px] flex items-center gap-1 shadow-sm">
+                <i class="fa-solid fa-link text-[9px]"></i> ${escapeHtml(item.url.replace(/^https?:\/\//, ''))}
+              </span>
+            ` : ''}
+          </span>
+        `);
+      });
+
+      if (elements.length === 0) {
+        return `<span class="text-slate-400 italic">Transmissão Ao Vivo - Adicione notícias no painel de controle.</span>`;
+      }
+
+      return elements.join(' <span class="text-sky-500/40 font-bold px-2">///</span> ');
+    }
+
+    function applyVisibilityState() {
+      const obsBar = document.getElementById('obsTickerBar');
+      const prevBar = document.getElementById('previewTickerWrapper');
+
+      if (state.isVisible) {
+        obsBar.classList.remove('translate-y-full', 'opacity-0');
+        obsBar.classList.add('translate-y-0', 'opacity-100');
+        
+        prevBar.classList.remove('translate-y-full', 'opacity-0');
+        prevBar.classList.add('translate-y-0', 'opacity-100');
+      } else {
+        obsBar.classList.remove('translate-y-0', 'opacity-100');
+        obsBar.classList.add('translate-y-full', 'opacity-0');
+        
+        prevBar.classList.remove('translate-y-0', 'opacity-100');
+        prevBar.classList.add('translate-y-full', 'opacity-0');
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[m];
+      });
+    }
+  </script>
+</body>
+</html>
