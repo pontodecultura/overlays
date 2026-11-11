@@ -46,7 +46,6 @@
       font-family: 'Outfit', sans-serif;
     }
 
-    /* Variáveis CSS Dinâmicas para Personalização do Ticker */
     :root {
       --ticker-bg-start-rgba: rgba(234, 88, 12, 0.9);
       --ticker-bg-end-rgba: rgba(154, 52, 18, 0.9);
@@ -57,7 +56,6 @@
       --ticker-highlight: #fde047;
     }
 
-    /* Animação Marquee Responsiva */
     @keyframes marqueeScroll {
       0% { transform: translate3d(0, 0, 0); }
       100% { transform: translate3d(-50%, 0, 0); }
@@ -69,7 +67,6 @@
       animation: marqueeScroll var(--speed, 25s) linear infinite;
     }
 
-    /* Estilização Dinâmica do Ticker com as Variáveis Customizadas */
     .ticker-bar-container {
       background: linear-gradient(135deg, var(--ticker-bg-start-rgba) 0%, var(--ticker-bg-end-rgba) 100%);
       border-top: 3px solid var(--ticker-border);
@@ -83,28 +80,17 @@
       border-right: 2px solid var(--ticker-border);
     }
 
-    .ticker-text-color {
-      color: var(--ticker-text);
-    }
-
-    .ticker-highlight-color {
-      color: var(--ticker-highlight);
-    }
-
-    /* Efeito de Transparência/Fade no Início e Fim da Área de Rolagem */
     .ticker-fade-edges {
       -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
       mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
     }
 
-    /* Glassmorphism para o Painel */
     .glass-card {
       background: rgba(15, 23, 42, 0.92);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(85, 122, 43, 0.4);
     }
 
-    /* Scrollbar personalizada */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -139,7 +125,6 @@
         </div>
       </div>
 
-      <!-- Alternador de Modos e URL OBS -->
       <div class="flex items-center gap-3">
         <button onclick="copyOBSUrl()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-brandGreen/50 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
           <i class="fa-solid fa-copy"></i> Copiar URL do OBS
@@ -166,7 +151,6 @@
       <!-- TOP ROW: Status do Overlay & Monitor Ao Vivo -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- Card de Status e Controle Rápido -->
         <div class="glass-card p-5 rounded-2xl flex flex-col justify-between shadow-2xl border-l-4 border-l-brandGreen">
           <div>
             <div class="flex justify-between items-center mb-3">
@@ -186,7 +170,6 @@
           </div>
         </div>
 
-        <!-- Monitor de Pré-visualização Ao Vivo -->
         <div class="glass-card p-5 rounded-2xl lg:col-span-2 flex flex-col justify-between shadow-2xl">
           <div class="flex justify-between items-center mb-2">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
@@ -195,7 +178,6 @@
             <span class="text-[11px] text-emerald-400 font-mono"><i class="fa-solid fa-bolt"></i> Sincronizado</span>
           </div>
 
-          <!-- Moldura da Simulação da Live -->
           <div class="w-full bg-slate-900 border border-slate-800 rounded-xl overflow-hidden relative flex flex-col justify-end min-h-[140px] shadow-inner">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/70 to-slate-800/40 flex items-center justify-center text-slate-700 font-bold text-sm pointer-events-none">
               <div class="text-center">
@@ -204,7 +186,6 @@
               </div>
             </div>
 
-            <!-- Ticker Preview Redimensionado -->
             <div id="previewTickerContainer" class="relative z-10 w-full transition-all duration-500 transform">
               <div class="w-full h-10 ticker-bar-container flex items-center overflow-hidden shadow-2xl text-xs">
                 <div class="ticker-badge-container text-white font-black px-4 h-full flex items-center gap-1.5 uppercase tracking-wider shrink-0 text-[11px]">
@@ -222,13 +203,11 @@
 
       </div>
 
-      <!-- MIDDLE ROW: Customizador de Cores e Transparência + Clima + Ajustes -->
+      <!-- MIDDLE ROW -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- Coluna Esquerda: Cores, Transparência e Clima -->
         <div class="space-y-6">
           
-          <!-- SELETOR DE CORES E TRANSPARÊNCIA -->
           <div class="glass-card p-6 rounded-2xl shadow-xl space-y-4 border-t-2 border-t-brandGreen">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
               <h3 class="text-base font-bold font-outfit text-white flex items-center gap-2">
@@ -237,7 +216,6 @@
               <button onclick="resetThemeToDefault()" class="text-[11px] text-slate-400 hover:text-white underline">Resetar</button>
             </div>
 
-            <!-- TRANSPARÊNCIA DO FUNDO -->
             <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex justify-between text-xs">
                 <span class="text-slate-300 font-semibold flex items-center gap-1.5">
@@ -248,7 +226,6 @@
               <input type="range" id="cfgBgOpacity" min="0" max="100" value="90" oninput="updateColorFromInput()" class="w-full accent-emerald-500">
             </div>
 
-            <!-- FADE IN/OUT TRANSPARENTE NAS EXTREMIDADES -->
             <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
               <div>
                 <label for="cfgEnableFadeEdges" class="text-xs text-slate-200 font-semibold block cursor-pointer">
@@ -259,7 +236,6 @@
               <input type="checkbox" id="cfgEnableFadeEdges" checked onchange="updateColorFromInput()" class="w-4 h-4 rounded bg-slate-900 border-slate-800 text-brandGreen focus:ring-brandGreen/20 cursor-pointer">
             </div>
 
-            <!-- COLOR PICKERS -->
             <div class="grid grid-cols-2 gap-3 text-xs pt-1">
               <div>
                 <label class="block text-[11px] text-slate-400 font-semibold mb-1">Fundo (Início)</label>
@@ -310,7 +286,6 @@
               </div>
             </div>
 
-            <!-- Presets Rápidos -->
             <div class="pt-2 border-t border-slate-800/60">
               <span class="text-[11px] text-slate-400 font-medium block mb-2">Presets Prontos:</span>
               <div class="grid grid-cols-2 gap-2 text-[11px]">
@@ -330,7 +305,6 @@
             </div>
           </div>
 
-          <!-- CLIMA (OPEN-METEO API) -->
           <div class="glass-card p-6 rounded-2xl shadow-xl space-y-4 border-t-2 border-t-brandGreen">
             <h3 class="text-base font-bold font-outfit text-white flex items-center gap-2 border-b border-slate-800 pb-3">
               <i class="fa-solid fa-cloud-sun text-emerald-400"></i> Clima & Previsão (Open-Meteo)
@@ -368,7 +342,6 @@
             </div>
           </div>
 
-          <!-- CONFIGURAÇÕES DE VELOCIDADE E TAG -->
           <div class="glass-card p-6 rounded-2xl shadow-xl space-y-4 border-t-2 border-t-brandOrange">
             <h3 class="text-base font-bold font-outfit text-white flex items-center gap-2 border-b border-slate-800 pb-3">
               <i class="fa-solid fa-sliders text-brandOrange"></i> Ajustes do Ticker
@@ -395,7 +368,6 @@
 
         </div>
 
-        <!-- Coluna Direita: Gerenciador de Notícias e Fila de Mensagens -->
         <div class="lg:col-span-2 space-y-6">
           <div class="glass-card p-6 rounded-2xl shadow-xl space-y-6 border-t-2 border-t-brandGreen">
             <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-4">
@@ -408,7 +380,6 @@
               <span id="itemsCountBadge" class="text-xs font-bold px-3 py-1 bg-brandGreen/20 text-emerald-300 border border-brandGreen rounded-full">0 itens</span>
             </div>
 
-            <!-- Formulário para Adicionar Item -->
             <form onsubmit="handleAddItem(event)" class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3">
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
@@ -440,7 +411,6 @@
               </div>
             </form>
 
-            <!-- Presets Rápidos de Notícias -->
             <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
               <span class="text-slate-500 font-medium whitespace-nowrap">Exemplos:</span>
               <button onclick="addPresetItem('NOTÍCIA', 'Transmissão ao vivo trazendo todas as atualizações do dia!', '')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 whitespace-nowrap transition">
@@ -454,7 +424,6 @@
               </button>
             </div>
 
-            <!-- Fila de Itens Cadastrados -->
             <div class="space-y-2">
               <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Itens Ativos na Fila</h4>
               <div id="itemsContainer" class="space-y-2 max-h-[380px] overflow-y-auto pr-1">
@@ -464,7 +433,6 @@
 
           </div>
 
-          <!-- INSTRUÇÕES OBS STUDIO -->
           <div class="glass-card p-6 rounded-2xl shadow-xl space-y-3">
             <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
               <i class="fa-solid fa-circle-info"></i> Como Configurar no OBS Studio
@@ -487,15 +455,12 @@
     <!-- VIEW 2: OVERLAY TICKER OBS STUDIO -->
     <div id="overlayView" class="hidden fixed inset-0 pointer-events-none flex flex-col justify-end">
       
-      <!-- Componente Ticker Principal -->
       <div id="obsTickerBar" class="w-full ticker-bar-container flex items-center overflow-hidden transition-all duration-500 transform translate-y-0 opacity-100 h-12 shadow-2xl">
         
-        <!-- Etiqueta Fixa da Esquerda -->
         <div id="obsBadge" class="ticker-badge-container text-white font-black px-6 h-full flex items-center justify-center gap-2 uppercase tracking-wider shrink-0 text-sm shadow-xl z-20">
           <i class="fa-solid fa-bolt text-amber-300"></i> <span id="obsBadgeText">AO VIVO</span>
         </div>
 
-        <!-- Container da Animação Marquee com Efeito de Fade -->
         <div id="obsMarqueeWrapper" class="w-full overflow-hidden whitespace-nowrap relative flex items-center ticker-fade-edges">
           <div id="obsMarquee" class="inline-flex items-center gap-10 animate-marquee text-white font-bold tracking-wide">
             <!-- Conteúdo Renderizado -->
@@ -513,10 +478,153 @@
     <span id="toastMsg">Notificação</span>
   </div>
 
-  <!-- ================= JAVASCRIPT & LÓGICA DE SINCRONIZAÇÃO ================= -->
+  <!-- ================= ARQUITETURA ORIENTADA A OBJETOS & CAMADA DE BANCO DE DADOS (SQLITE/LOCALSTORAGE PATTERN) ================= -->
   <script>
-    const BROADCAST_KEY = 'obs_ticker_sync_channel';
-    let syncChannel = null;
+    /**
+     * MODEL: TickerStateModel
+     * Modela os dados de configuração e itens do ticker de forma estruturada.
+     */
+    class TickerStateModel {
+      constructor(data = {}) {
+        this.isVisible = data.isVisible !== undefined ? data.isVisible : true;
+        this.badgeText = data.badgeText || 'AO VIVO';
+        this.scrollSpeed = data.scrollSpeed || 25;
+        this.fontSize = data.fontSize || 14;
+        this.theme = data.theme || {
+          bgStart: '#ea580c',
+          bgEnd: '#9a3412',
+          bgOpacity: 90,
+          enableFadeEdges: true,
+          border: '#557a2b',
+          badgeBg: '#405d20',
+          badgeText: '#ffffff',
+          text: '#ffffff',
+          highlight: '#fde047'
+        };
+        this.weather = data.weather || {
+          enabled: true,
+          lat: -23.5505,
+          lng: -46.6333,
+          cityName: 'São Paulo',
+          temp: null,
+          humidity: null,
+          wind: null,
+          condition: 'Carregando...',
+          icon: '🌤️',
+          lastUpdated: null
+        };
+        this.items = data.items || [
+          { id: 1, category: 'NOTÍCIA', text: 'Bem-vindo à transmissão ao vivo! Acompanhe todas as atualizações.', url: '' },
+          { id: 2, category: 'REDES', text: 'Siga nossas redes sociais para conteúdos diários exclusivos.', url: 'https://instagram.com' },
+          { id: 3, category: 'PROMO', text: 'Use o cupom AOVIVO10 para 10% de desconto em nossa loja.', url: '' }
+        ];
+      }
+
+      toPlainObject() {
+        return {
+          isVisible: this.isVisible,
+          badgeText: this.badgeText,
+          scrollSpeed: this.scrollSpeed,
+          fontSize: this.fontSize,
+          theme: this.theme,
+          weather: this.weather,
+          items: this.items
+        };
+      }
+    }
+
+    /**
+     * DATABASE REPOSITORY: BrowserDatabaseRepository
+     * Padrão Repository simulando conexões e transações SQLite via LocalStorage do navegador.
+     */
+    class BrowserDatabaseRepository {
+      constructor(storageKey = 'obs_sqlite_db_store') {
+        this.storageKey = storageKey;
+      }
+
+      connect() {
+        // Simulação de inicialização de conexão com o banco local
+        if (!localStorage.getItem(this.storageKey)) {
+          const initialModel = new TickerStateModel();
+          this.executeTransaction(() => initialModel);
+        }
+      }
+
+      executeQuery() {
+        try {
+          const rawData = localStorage.getItem(this.storageKey);
+          if (!rawData) return new TickerStateModel();
+          const parsed = JSON.parse(rawData);
+          return new TickerStateModel(parsed);
+        } catch (error) {
+          console.error("DB Query Error:", error);
+          return new TickerStateModel();
+        }
+      }
+
+      executeTransaction(transactionCallback) {
+        try {
+          const currentState = this.executeQuery();
+          const updatedState = transactionCallback(currentState);
+          const modelToStore = updatedState instanceof TickerStateModel ? updatedState : new TickerStateModel(updatedState);
+          
+          localStorage.setItem(this.storageKey, JSON.stringify(modelToStore.toPlainObject()));
+          return modelToStore;
+        } catch (error) {
+          console.error("DB Transaction Error:", error);
+          throw error;
+        }
+      }
+    }
+
+    /**
+     * SERVICE: BroadcastTickerService
+     * Controla as regras de negócio, sincronização entre abas e renderização.
+     */
+    class BroadcastTickerService {
+      constructor() {
+        this.dbRepo = new BrowserDatabaseRepository('obs_ticker_sqlite_db');
+        this.dbRepo.connect();
+        this.broadcastChannelKey = 'obs_ticker_sync_channel';
+        this.syncChannel = null;
+      }
+
+      init() {
+        this.initBroadcastChannel();
+      }
+
+      initBroadcastChannel() {
+        if ('BroadcastChannel' in window) {
+          this.syncChannel = new BroadcastChannel(this.broadcastChannelKey);
+          this.syncChannel.onmessage = (event) => {
+            if (event.data && event.data.type === 'DB_STATE_SYNC') {
+              renderAll();
+            }
+          };
+        }
+
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'obs_ticker_sqlite_db') {
+            renderAll();
+          }
+        });
+      }
+
+      getState() {
+        return this.dbRepo.executeQuery();
+      }
+
+      saveState(mutatorCallback) {
+        const newState = this.dbRepo.executeTransaction(mutatorCallback);
+        if (this.syncChannel) {
+          this.syncChannel.postMessage({ type: 'DB_STATE_SYNC' });
+        }
+        return newState;
+      }
+    }
+
+    // Instância global do serviço de arquitetura
+    const tickerService = new BroadcastTickerService();
 
     const THEME_PRESETS = {
       barriguda: {
@@ -565,31 +673,6 @@
       }
     };
 
-    let appState = {
-      isVisible: true,
-      badgeText: 'AO VIVO',
-      scrollSpeed: 25,
-      fontSize: 14,
-      theme: { ...THEME_PRESETS.barriguda },
-      weather: {
-        enabled: true,
-        lat: -23.5505,
-        lng: -46.6333,
-        cityName: 'São Paulo',
-        temp: null,
-        humidity: null,
-        wind: null,
-        condition: 'Carregando...',
-        icon: '🌤️',
-        lastUpdated: null
-      },
-      items: [
-        { id: 1, category: 'NOTÍCIA', text: 'Bem-vindo à transmissão ao vivo! Acompanhe todas as atualizações.', url: '' },
-        { id: 2, category: 'REDES', text: 'Siga nossas redes sociais para conteúdos diários exclusivos.', url: 'https://instagram.com' },
-        { id: 3, category: 'PROMO', text: 'Use o cupom AOVIVO10 para 10% de desconto em nossa loja.', url: '' }
-      ]
-    };
-
     const weatherCodesMap = {
       0: { text: "Céu Limpo", icon: "☀️" },
       1: { text: "Predom. Limpo", icon: "🌤️" },
@@ -605,8 +688,7 @@
     };
 
     window.addEventListener('DOMContentLoaded', () => {
-      initBroadcastChannel();
-      loadStoredState();
+      tickerService.init();
       checkUrlRouting();
       fetchWeatherAPI();
       
@@ -657,60 +739,27 @@
       renderAll();
     }
 
-    function initBroadcastChannel() {
-      if ('BroadcastChannel' in window) {
-        syncChannel = new BroadcastChannel(BROADCAST_KEY);
-        syncChannel.onmessage = (event) => {
-          if (event.data && event.data.type === 'STATE_UPDATE') {
-            appState = event.data.state;
-            renderAll();
-          }
-        };
-      }
-
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'obs_ticker_state' && e.newValue) {
-          appState = JSON.parse(e.newValue);
-          renderAll();
-        }
-      });
-    }
-
     function saveState() {
       const badgeInput = document.getElementById('cfgBadgeText');
-      if (badgeInput) appState.badgeText = badgeInput.value;
-
       const speedInput = document.getElementById('cfgSpeed');
-      if (speedInput) appState.scrollSpeed = parseInt(speedInput.value) || 25;
-
       const fontInput = document.getElementById('cfgFontSize');
-      if (fontInput) appState.fontSize = parseInt(fontInput.value) || 14;
 
-      localStorage.setItem('obs_ticker_state', JSON.stringify(appState));
-
-      if (syncChannel) {
-        syncChannel.postMessage({ type: 'STATE_UPDATE', state: appState });
-      }
+      tickerService.saveState((state) => {
+        if (badgeInput) state.badgeText = badgeInput.value;
+        if (speedInput) state.scrollSpeed = parseInt(speedInput.value) || 25;
+        if (fontInput) state.fontSize = parseInt(fontInput.value) || 14;
+        return state;
+      });
 
       renderAll();
     }
 
-    function loadStoredState() {
-      const stored = localStorage.getItem('obs_ticker_state');
-      if (stored) {
-        try {
-          appState = { ...appState, ...JSON.parse(stored) };
-        } catch (e) {
-          console.error("Erro ao carregar estado:", e);
-        }
-      }
-    }
-
     async function fetchWeatherAPI() {
-      if (!appState.weather.enabled) return;
+      const state = tickerService.getState();
+      if (!state.weather.enabled) return;
 
-      const lat = appState.weather.lat;
-      const lng = appState.weather.lng;
+      const lat = state.weather.lat;
+      const lng = state.weather.lng;
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`;
 
       try {
@@ -719,35 +768,41 @@
         const current = data.current;
 
         const codeInfo = weatherCodesMap[current.weather_code] || { text: "Tempo Limpo", icon: "☀️" };
-
-        appState.weather.temp = Math.round(current.temperature_2m);
-        appState.weather.humidity = current.relative_humidity_2m;
-        appState.weather.wind = Math.round(current.wind_speed_10m);
-        appState.weather.condition = codeInfo.text;
-        appState.weather.icon = codeInfo.icon;
-        
         const now = new Date();
-        appState.weather.lastUpdated = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        saveState();
+        tickerService.saveState((st) => {
+          st.weather.temp = Math.round(current.temperature_2m);
+          st.weather.humidity = current.relative_humidity_2m;
+          st.weather.wind = Math.round(current.wind_speed_10m);
+          st.weather.condition = codeInfo.text;
+          st.weather.icon = codeInfo.icon;
+          st.weather.lastUpdated = timeStr;
+          return st;
+        });
       } catch (err) {
         console.error("Erro na API Open-Meteo:", err);
-        appState.weather.condition = "Erro no clima";
-        renderAll();
       }
     }
 
     function updateWeatherNow() {
-      appState.weather.lat = parseFloat(document.getElementById('cfgLat').value) || -23.5505;
-      appState.weather.lng = parseFloat(document.getElementById('cfgLng').value) || -46.6333;
-      appState.weather.cityName = document.getElementById('cfgCityName').value || 'São Paulo';
-      appState.weather.enabled = document.getElementById('cfgWeatherEnabled').checked;
+      const lat = parseFloat(document.getElementById('cfgLat').value) || -23.5505;
+      const lng = parseFloat(document.getElementById('cfgLng').value) || -46.6333;
+      const cityName = document.getElementById('cfgCityName').value || 'São Paulo';
+      const enabled = document.getElementById('cfgWeatherEnabled').checked;
+
+      tickerService.saveState((st) => {
+        st.weather.lat = lat;
+        st.weather.lng = lng;
+        st.weather.cityName = cityName;
+        st.weather.enabled = enabled;
+        return st;
+      });
 
       showToast("Atualizando dados do clima...");
       fetchWeatherAPI();
     }
 
-    /* CONVERSOR DE HEX PARA RGBA COM OPACIDADE */
     function hexToRgba(hex, alphaPercent) {
       let c = hex.replace('#', '');
       if (c.length === 3) {
@@ -761,10 +816,10 @@
       return `rgba(${r}, ${g}, ${b}, ${a})`;
     }
 
-    // CONTROLE DE CORES E TRANSPARÊNCIA
     function applyCSSVariables() {
       const root = document.documentElement;
-      const t = appState.theme || THEME_PRESETS.barriguda;
+      const state = tickerService.getState();
+      const t = state.theme;
       const opacity = t.bgOpacity !== undefined ? t.bgOpacity : 90;
 
       const bgStartRgba = hexToRgba(t.bgStart, opacity);
@@ -778,7 +833,6 @@
       root.style.setProperty('--ticker-text', t.text);
       root.style.setProperty('--ticker-highlight', t.highlight);
 
-      // Alternar classe de efeito fade nas extremidades
       const prevWrapper = document.getElementById('prevMarqueeWrapper');
       const obsWrapper = document.getElementById('obsMarqueeWrapper');
       const enableFade = t.enableFadeEdges !== undefined ? t.enableFadeEdges : true;
@@ -796,18 +850,20 @@
       const opacityInput = document.getElementById('cfgBgOpacity');
       const fadeEdgesInput = document.getElementById('cfgEnableFadeEdges');
 
-      appState.theme = {
-        bgStart: document.getElementById('clrBgStart').value,
-        bgEnd: document.getElementById('clrBgEnd').value,
-        bgOpacity: opacityInput ? parseInt(opacityInput.value) : 90,
-        enableFadeEdges: fadeEdgesInput ? fadeEdgesInput.checked : true,
-        border: document.getElementById('clrBorder').value,
-        badgeBg: document.getElementById('clrBadgeBg').value,
-        badgeText: '#ffffff',
-        text: document.getElementById('clrText').value,
-        highlight: document.getElementById('clrHighlight').value
-      };
-      saveState();
+      tickerService.saveState((st) => {
+        st.theme = {
+          bgStart: document.getElementById('clrBgStart').value,
+          bgEnd: document.getElementById('clrBgEnd').value,
+          bgOpacity: opacityInput ? parseInt(opacityInput.value) : 90,
+          enableFadeEdges: fadeEdgesInput ? fadeEdgesInput.checked : true,
+          border: document.getElementById('clrBorder').value,
+          badgeBg: document.getElementById('clrBadgeBg').value,
+          badgeText: '#ffffff',
+          text: document.getElementById('clrText').value,
+          highlight: document.getElementById('clrHighlight').value
+        };
+        return st;
+      });
     }
 
     function syncColorHex(colorId, hexVal) {
@@ -818,7 +874,8 @@
     }
 
     function syncColorFormInputs() {
-      const t = appState.theme || THEME_PRESETS.barriguda;
+      const state = tickerService.getState();
+      const t = state.theme;
       const setVal = (cId, tId, val) => {
         const cEl = document.getElementById(cId);
         const tEl = document.getElementById(tId);
@@ -848,8 +905,10 @@
 
     function applyPresetTheme(key) {
       if (THEME_PRESETS[key]) {
-        appState.theme = { ...THEME_PRESETS[key] };
-        saveState();
+        tickerService.saveState((st) => {
+          st.theme = { ...THEME_PRESETS[key] };
+          return st;
+        });
         showToast("Preset de cores aplicado!");
       }
     }
@@ -859,9 +918,12 @@
     }
 
     function toggleVisibility() {
-      appState.isVisible = !appState.isVisible;
-      saveState();
-      showToast(appState.isVisible ? "Overlay visível!" : "Overlay ocultado!");
+      tickerService.saveState((st) => {
+        st.isVisible = !st.isVisible;
+        return st;
+      });
+      const state = tickerService.getState();
+      showToast(state.isVisible ? "Overlay visível!" : "Overlay ocultado!");
     }
 
     function handleAddItem(e) {
@@ -872,35 +934,39 @@
 
       if (!text) return;
 
-      const newItem = {
-        id: Date.now(),
-        category: cat,
-        text: text,
-        url: url
-      };
+      tickerService.saveState((st) => {
+        st.items.push({
+          id: Date.now(),
+          category: cat,
+          text: text,
+          url: url
+        });
+        return st;
+      });
 
-      appState.items.push(newItem);
       document.getElementById('itemText').value = '';
       document.getElementById('itemUrl').value = '';
-
-      saveState();
       showToast("Notícia adicionada!");
     }
 
     function addPresetItem(category, text, url) {
-      appState.items.push({
-        id: Date.now(),
-        category: category,
-        text: text,
-        url: url
+      tickerService.saveState((st) => {
+        st.items.push({
+          id: Date.now(),
+          category: category,
+          text: text,
+          url: url
+        });
+        return st;
       });
-      saveState();
       showToast("Exemplo adicionado!");
     }
 
     function removeItem(id) {
-      appState.items = appState.items.filter(item => item.id !== id);
-      saveState();
+      tickerService.saveState((st) => {
+        st.items = st.items.filter(item => item.id !== id);
+        return st;
+      });
       showToast("Item removido!");
     }
 
@@ -914,10 +980,11 @@
     }
 
     function renderDashboardControls() {
+      const state = tickerService.getState();
       const toggleBtn = document.getElementById('toggleVisibilityBtn');
       const statusBadge = document.getElementById('statusBadge');
 
-      if (appState.isVisible) {
+      if (state.isVisible) {
         if (toggleBtn) {
           toggleBtn.innerHTML = `<i class="fa-solid fa-eye-slash"></i> Ocultar Ticker`;
           toggleBtn.className = "w-full py-3 px-4 bg-brandOrange hover:bg-brandOrange-light text-white font-black rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-sm";
@@ -937,18 +1004,19 @@
         }
       }
 
-      document.getElementById('obsBadgeText').innerText = appState.badgeText;
-      document.getElementById('prevBadgeText').innerText = appState.badgeText;
-      document.getElementById('weatherSyncTime').innerText = appState.weather.lastUpdated || 'Buscando...';
+      document.getElementById('obsBadgeText').innerText = state.badgeText;
+      document.getElementById('prevBadgeText').innerText = state.badgeText;
+      document.getElementById('weatherSyncTime').innerText = state.weather.lastUpdated || 'Buscando...';
     }
 
     function renderItemsList() {
+      const state = tickerService.getState();
       const container = document.getElementById('itemsContainer');
       const badgeCount = document.getElementById('itemsCountBadge');
 
-      if (badgeCount) badgeCount.innerText = `${appState.items.length} itens`;
+      if (badgeCount) badgeCount.innerText = `${state.items.length} itens`;
 
-      if (appState.items.length === 0) {
+      if (state.items.length === 0) {
         container.innerHTML = `
           <div class="text-center py-6 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
             Nenhuma notícia cadastrada. Adicione uma no formulário acima.
@@ -956,7 +1024,7 @@
         return;
       }
 
-      container.innerHTML = appState.items.map(item => `
+      container.innerHTML = state.items.map(item => `
         <div class="bg-slate-900/90 border border-slate-800 hover:border-brandGreen/50 p-3 rounded-xl flex items-center justify-between gap-3 text-xs transition">
           <div class="flex items-center gap-3 overflow-hidden">
             <span class="px-2 py-0.5 rounded font-black text-[10px] tracking-wider uppercase ${getCategoryBadgeStyle(item.category)} shrink-0">
@@ -986,12 +1054,13 @@
     }
 
     function renderMarqueeContent() {
+      const state = tickerService.getState();
       const htmlContent = buildMarqueeHTML();
       const obsMarquee = document.getElementById('obsMarquee');
       const prevMarquee = document.getElementById('prevMarquee');
 
-      const speed = `${appState.scrollSpeed}s`;
-      const fontSize = `${appState.fontSize}px`;
+      const speed = `${state.scrollSpeed}s`;
+      const fontSize = `${state.fontSize}px`;
 
       obsMarquee.style.setProperty('--speed', speed);
       obsMarquee.style.fontSize = fontSize;
@@ -1004,10 +1073,11 @@
     }
 
     function buildMarqueeHTML() {
+      const state = tickerService.getState();
       let elements = [];
 
-      if (appState.weather.enabled && appState.weather.temp !== null) {
-        const w = appState.weather;
+      if (state.weather.enabled && state.weather.temp !== null) {
+        const w = state.weather;
         elements.push(`
           <span class="inline-flex items-center gap-2 bg-slate-950/40 px-3 py-1 rounded-full border border-[var(--ticker-border)] text-[var(--ticker-text)] shrink-0">
             <span class="text-base">${w.icon}</span>
@@ -1020,7 +1090,7 @@
         `);
       }
 
-      appState.items.forEach(item => {
+      state.items.forEach(item => {
         elements.push(`
           <span class="inline-flex items-center gap-2.5 shrink-0">
             <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${getCategoryBadgeStyle(item.category)}">
@@ -1044,10 +1114,11 @@
     }
 
     function applyVisibilityState() {
+      const state = tickerService.getState();
       const obsBar = document.getElementById('obsTickerBar');
       const prevBar = document.getElementById('previewTickerContainer');
 
-      if (appState.isVisible) {
+      if (state.isVisible) {
         obsBar.classList.remove('translate-y-full', 'opacity-0');
         obsBar.classList.add('translate-y-0', 'opacity-100');
 
